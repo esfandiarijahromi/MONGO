@@ -1,0 +1,77 @@
+db = db.getSiblingDB("orchestrator");
+
+db.getCollection("sagaSequenceActivity_Login_view").aggregate(
+
+   [
+
+       {
+
+           "$addFields" : {
+
+               "mobile" : {
+
+                   "$substr" : [
+
+                       "$sequenceContext.mobile",
+
+                       2.0,
+
+                       20.0
+
+                   ]
+
+               }
+
+           }
+
+       },
+
+       {
+
+           "$addFields" : {
+
+               "mobile" : {
+
+                   "$concat" : [
+
+                       "0",
+
+                       "$mobile"
+
+                   ]
+
+               }
+
+           }
+
+       },
+
+       {
+
+           "$lookup" : {
+
+               "from" : "allowedPhoneNumber",
+
+               "localField" : "mobile",
+
+               "foreignField" : "_id",
+
+               "as" : "mysequence"
+
+           }
+
+       },
+
+       {
+
+           "$match" : {
+
+               "mysequence.0.position.department" : "IT",
+
+               "mysequence.0.position.organization" : "BANK"
+
+           }
+
+       }
+
+   ],
