@@ -1,0 +1,19 @@
+var myIds = new Array() 
+db.allowedPhoneNumber.find({
+    "position.organization": "BANK",
+    "position.department": "IT"
+}, {
+    "_id": 1
+}).forEach(function(Doc) {
+    myIds.push(Doc._id)
+}) var format = /(^09)/
+myIds.forEach(function(item, i) {
+    if (format.test(item)) myIds[i] = '989' + myIds[i].substr(2)
+})
+myIds db.getCollection("sagaSequenceActivity_Login_view").aggregate([{
+    $match: {
+        "sequenceContext.mobile": {
+            $in: myIds
+        }
+    }
+}])
